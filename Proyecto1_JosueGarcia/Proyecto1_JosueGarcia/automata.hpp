@@ -89,6 +89,13 @@ public:
         tokens.push_back(tok);
         siguiente.push_back(sig);
     }
+    void addArrayEvent(vector<char> arr, Estado *sig)
+    {
+        for(int i=0; i<arr.size(); ++i)
+        {
+            
+        }
+    }
     void setEstado(string st)
     {
         estado = st;

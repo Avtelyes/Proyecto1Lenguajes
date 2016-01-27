@@ -93,7 +93,8 @@ public:
     {
         for(int i=0; i<arr.size(); ++i)
         {
-            
+            tokens.push_back(arr[i]);
+            siguiente.push_back(sig);
         }
     }
     void setEstado(string st)

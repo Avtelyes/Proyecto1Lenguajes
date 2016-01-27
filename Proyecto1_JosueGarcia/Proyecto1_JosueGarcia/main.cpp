@@ -45,6 +45,38 @@ int main(int argc, const char * argv[]) {
     
     estado0->setEstado("0");
     estado0->addEvent(' ', estado0);
+    estado0->addArrayEvent(digitos, estado1);
+    estado0->addEvent('=', estado11);
+    estado0->addEvent('+', estado11);
+    estado0->addEvent('*', estado11);
+    estado0->addEvent('(', estado11);
+    estado0->addEvent(')', estado11);
+    estado0->addEvent('^', estado11);
+    estado0->addEvent('/', estado12);
+    estado0->addArrayEvent(variables, estado16);
+    estado0->addEvent('-', estado18);
+    
+    estado1->setEstado("1");
+    estado1->addArrayEvent(digitos, estado1);
+    estado1->addEvent('(', estado2);
+    estado1->addEvent(')', estado2);
+    estado1->addEvent(' ', estado2);
+    estado1->addEvent('.', estado3);
+    estado1->addArrayEvent(operandos, estado7);
+    estado1->addEvent('e', estado8);
+    estado1->addEvent('E', estado8);
+    
+    estado3->setEstado("3");
+    estado3->addArrayEvent(digitos, estado4);
+    
+    estado4->setEstado("4");
+    estado4->addArrayEvent(digitos, estado4);
+    estado4->addEvent('e', estado8);
+    estado4->addEvent('E', estado8);
+    estado4->addEvent(' ', estado5);
+    estado4->addEvent('(', estado5);
+    estado4->addEvent(')', estado5);
+    estado4->addArrayEvent(operandos, estado5);
     
     /*string mensaje = "87*9";
     

@@ -39,37 +39,55 @@ public:
         tokens.push_back(tok);
         siguiente.push_back(sig);
     }
+    void addState(Estado *act, string tok , Estado *sig)
+    {
+        actual = act;
+        tokens.push_back(tok);
+        siguiente.push_back(sig);
+    }
 };
 
 class Estado
 {
 private:
     string estado;
-    string token;
+    vector<char> tokens;
     //vector<string> eventos;
-    string sig_estado;
+    vector<Estado *> siguiente;
     
 public:
     Estado()
     {
         estado = "";
-        token = "";
-        sig_estado = "";
     }
-    Estado(string es, string tk, string sig)
+    Estado(string es, char tk, Estado *sig)
     {
         estado = es;
-        token = tk;
-        sig_estado = sig;
+        tokens.push_back(tk);
+        siguiente.push_back(sig);
     }
-    int hacia_estado(string carac)
+    Estado *toNext(char tok)
     {
-        if (carac == token)
+        Estado *aux = NULL;
+        
+        for(int i=0; i<tokens.size(); ++i)
         {
-            return stoi(estado);
+            if(tok == tokens[i])
+            {
+                aux = siguiente[i];
+                break;
+            }
+            else
+            {
+                aux = NULL;
+            }
         }
-        else
-            return 0;
+        return aux;
+    }
+    void addEvent(char tok, Estado *sig)
+    {
+        tokens.push_back(tok);
+        siguiente.push_back(sig);
     }
     void setEstado(string st)
     {
@@ -79,21 +97,12 @@ public:
     {
         return estado;
     }
-    void setToken(string tok)
+    void getEvents(char tok)
     {
-        token = tok;
-    }
-    string getToken()
-    {
-        return token;
-    }
-    void setSigEs(string ses)
-    {
-        sig_estado = ses;
-    }
-    string getSigEs()
-    {
-        return sig_estado;
+        for(int i=0; i<tokens.size(); ++i)
+        {
+            cout << tokens[i] << "\t" << siguiente[i]->getEstado();
+        }
     }
 };
 

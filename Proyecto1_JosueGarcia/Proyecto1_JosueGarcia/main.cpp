@@ -42,6 +42,8 @@ int main(int argc, const char * argv[]) {
     Estado *estado18 = new Estado();
     Estado *estado19 = estado0;
     Estado *estado20 = estado0;
+    Estado *estado21 = new Estado();
+    Estado *estado22 = estado0;
     
     estado0->setEstado("0");
     estado0->addEvent(' ', estado0);
@@ -49,12 +51,12 @@ int main(int argc, const char * argv[]) {
     estado0->addEventEnd('=', estado11, "Asignación");
     estado0->addEventEnd('+', estado11, "Suma");
     estado0->addEventEnd('*', estado11, "Multiplicación");
-    estado0->addEventEnd('(', estado11, "Paréntesis que abre");
+    estado0->addEventEnd('-', estado11, "Resta");
     estado0->addEventEnd(')', estado11, "Paréntesis que cierra");
     estado0->addEventEnd('^', estado11, "Potencia");
     estado0->addEvent('/', estado12);
     estado0->addArrayEvent(variables, estado16);
-    estado0->addEvent('-', estado18);
+    estado0->addEvent('(', estado18);
     
     estado1->setEstado("1");
     estado1->addArrayEvent(digitos, estado1);
@@ -122,10 +124,18 @@ int main(int argc, const char * argv[]) {
     estado16->addArrayEventEnd(operandos, estado17, "Variable");
     
     estado18->setEstado("18");
-    estado18->addArrayEvent(digitos, estado1);
-    estado18->addEventEnd(' ', estado19, "Resta");
-    estado18->addEventEnd('(', estado19, "Resta");
-    estado18->addArrayEventEnd(variables, estado19, "Resta");
+    estado18->addArrayEventEnd(digitos, estado19, "Paréntesis que abre");
+    estado18->addEventEnd(' ', estado19, "Paréntesis que abre");
+    estado18->addArrayEventEnd(operandos, estado19, "Paréntesis que abre");
+    estado18->addArrayEventEnd(variables, estado19, "Paréntesis que abre");
+    estado18->addEvent('-', estado21);
+    
+    estado21->setEstado("21");
+    estado21->setEstadoFin(true);
+    estado21->addArrayEvent(digitos, estado1);
+    estado21->addEventEnd(' ', estado22, "Resta");
+    estado21->addEventEnd(' ', estado22, "Resta");
+    estado21->addArrayEventEnd(variables, estado22, "Resta");
     
     /*string mensaje = "87*9";
     
@@ -176,9 +186,13 @@ int main(int argc, const char * argv[]) {
                 }
                 else if(aux == estado0)
                 {
-                    token_identificado.push_back(tokenI);
-                    identificacion_token.push_back(aux->getFin(line.at(i)));
-                    tokenI = "";
+                    aux = aux->toNext(line.at(i));
+                    if(aux == estado0)
+                    {
+                        token_identificado.push_back(tokenI);
+                        identificacion_token.push_back(aux->getFin(line.at(i)));
+                        tokenI = "";
+                    }
                     //aux = aux->toNext(line.at(i));
                 }
             }

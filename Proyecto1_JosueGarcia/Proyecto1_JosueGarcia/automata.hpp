@@ -55,6 +55,7 @@ private:
     //vector<string> eventos;
     vector<Estado *> siguiente;
     vector<string> fin;
+    bool estadoFin;
     
 public:
     Estado()
@@ -142,6 +143,14 @@ public:
             }
         }
         return aux;
+    }
+    void setEstadoFin(bool fn)
+    {
+        estadoFin = fn;
+    }
+    bool getEstadoFin()
+    {
+        return estadoFin;
     }
 };
 

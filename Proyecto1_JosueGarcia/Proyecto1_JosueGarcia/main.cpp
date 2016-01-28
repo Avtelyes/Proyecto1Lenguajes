@@ -61,6 +61,7 @@ int main(int argc, const char * argv[]) {
     estado1->addEventEnd('(', estado2, "Entero");
     estado1->addEventEnd(')', estado2, "Entero");
     estado1->addEventEnd(' ', estado2, "Entero");
+    estado1->addEventEnd('#', estado2, "Entero");
     estado1->addEvent('.', estado3);
     estado1->addArrayEventEnd(operandos, estado7, "Entero");
     estado1->addEvent('e', estado8);
@@ -158,7 +159,7 @@ int main(int argc, const char * argv[]) {
                 if(aux2 == estado0)
                 {
                     token_identificado.push_back(tokenI);
-                    identificacion_token.push_back(aux->getFin(tokenI.back()));
+                    identificacion_token.push_back(aux->getFin(line.at(i)));
                     tokenI = "";
                     tokenI += line.at(i);
                 }
@@ -173,17 +174,40 @@ int main(int argc, const char * argv[]) {
                     cout << "Error al procesar el token " << line.at(i) << " en la linea " << linea << endl;
                     exit(EXIT_FAILURE);
                 }
-                /*else if(aux == estado0)
+                else if(aux == estado0)
                 {
-                    aux = aux->toNext(line.at(i));
-                }*/
+                    token_identificado.push_back(tokenI);
+                    identificacion_token.push_back(aux->getFin(line.at(i)));
+                    tokenI = "";
+                    //aux = aux->toNext(line.at(i));
+                }
             }
             ++linea;
+            //aux = aux->toNext('#');
+            if(aux->toNext('#') == estado0)
+            {
+                token_identificado.push_back(tokenI);
+                identificacion_token.push_back(aux->getFin('#'));
+                tokenI = "";
+                aux = estado0;
+            }
+            else if (aux->toNext('#') == NULL)
+            {
+                cout << "Error al procesar el token " << tokenI.back() << " en la linea " << linea-1 << endl;
+                exit(EXIT_FAILURE);
+            }
         }
         archivo.close();
     }
     
-    else cout << "Unable to open file" << endl;
+    else cout << "No se pudo abrir el archivo" << endl;
+    
+    cout << "Token\tTipo" << endl;
+    
+    for(int i=0; i<token_identificado.size(); ++i)
+    {
+        cout << token_identificado[i] << "\t" << identificacion_token[i] << endl;
+    }
     
     return 0;
 }

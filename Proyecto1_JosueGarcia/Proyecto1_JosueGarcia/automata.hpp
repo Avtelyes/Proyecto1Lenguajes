@@ -54,6 +54,7 @@ private:
     vector<char> tokens;
     //vector<string> eventos;
     vector<Estado *> siguiente;
+    vector<string> fin;
     
 public:
     Estado()
@@ -88,6 +89,7 @@ public:
     {
         tokens.push_back(tok);
         siguiente.push_back(sig);
+        fin.push_back("");
     }
     void addArrayEvent(vector<char> arr, Estado *sig)
     {
@@ -95,6 +97,22 @@ public:
         {
             tokens.push_back(arr[i]);
             siguiente.push_back(sig);
+            fin.push_back("");
+        }
+    }
+    void addEventEnd(char tok, Estado *sig, string end)
+    {
+        tokens.push_back(tok);
+        siguiente.push_back(sig);
+        fin.push_back(end);
+    }
+    void addArrayEventEnd(vector<char> arr, Estado *sig, string end)
+    {
+        for(int i=0; i<arr.size(); ++i)
+        {
+            tokens.push_back(arr[i]);
+            siguiente.push_back(sig);
+            fin.push_back(end);
         }
     }
     void setEstado(string st)
@@ -111,6 +129,19 @@ public:
         {
             cout << tokens[i] << "\t" << siguiente[i]->getEstado();
         }
+    }
+    string getFin(char end)
+    {
+        string aux = "";
+        for(int i=0; i<tokens.size(); ++i)
+        {
+            if(tokens[i] == end)
+            {
+                aux = fin[i];
+                break;
+            }
+        }
+        return aux;
     }
 };
 

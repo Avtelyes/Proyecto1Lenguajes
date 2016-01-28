@@ -46,23 +46,23 @@ int main(int argc, const char * argv[]) {
     estado0->setEstado("0");
     estado0->addEvent(' ', estado0);
     estado0->addArrayEvent(digitos, estado1);
-    estado0->addEvent('=', estado11);
-    estado0->addEvent('+', estado11);
-    estado0->addEvent('*', estado11);
-    estado0->addEvent('(', estado11);
-    estado0->addEvent(')', estado11);
-    estado0->addEvent('^', estado11);
+    estado0->addEventEnd('=', estado11, "Asignación");
+    estado0->addEventEnd('+', estado11, "Suma");
+    estado0->addEventEnd('*', estado11, "Multiplicación");
+    estado0->addEventEnd('(', estado11, "Paréntesis que abre");
+    estado0->addEventEnd(')', estado11, "Paréntesis que cierra");
+    estado0->addEventEnd('^', estado11, "Potencia");
     estado0->addEvent('/', estado12);
     estado0->addArrayEvent(variables, estado16);
     estado0->addEvent('-', estado18);
     
     estado1->setEstado("1");
     estado1->addArrayEvent(digitos, estado1);
-    estado1->addEvent('(', estado2);
-    estado1->addEvent(')', estado2);
-    estado1->addEvent(' ', estado2);
+    estado1->addEventEnd('(', estado2, "Entero");
+    estado1->addEventEnd(')', estado2, "Entero");
+    estado1->addEventEnd(' ', estado2, "Entero");
     estado1->addEvent('.', estado3);
-    estado1->addArrayEvent(operandos, estado7);
+    estado1->addArrayEventEnd(operandos, estado7, "Entero");
     estado1->addEvent('e', estado8);
     estado1->addEvent('E', estado8);
     
@@ -73,10 +73,58 @@ int main(int argc, const char * argv[]) {
     estado4->addArrayEvent(digitos, estado4);
     estado4->addEvent('e', estado8);
     estado4->addEvent('E', estado8);
-    estado4->addEvent(' ', estado5);
-    estado4->addEvent('(', estado5);
-    estado4->addEvent(')', estado5);
-    estado4->addArrayEvent(operandos, estado5);
+    estado4->addEventEnd(' ', estado5,"Real");
+    estado4->addEventEnd('(', estado5,"Real");
+    estado4->addEventEnd(')', estado5, "Real");
+    estado4->addArrayEventEnd(operandos, estado5, "Real");
+    
+    estado8->setEstado("8");
+    estado8->addEvent('+', estado9);
+    estado8->addEvent('-', estado9);
+    
+    estado9->setEstado("9");
+    estado9->addArrayEvent(digitos, estado9);
+    estado9->addEventEnd(' ', estado10, "Real");
+    estado9->addEventEnd('(', estado10, "Real");
+    estado9->addEventEnd(')', estado10, "Real");
+    estado9->addArrayEventEnd(operandos, estado10, "Real");
+    
+    estado12->setEstado("12");
+    estado12->addEventEnd('(', estado13, "División");
+    estado12->addEventEnd(' ', estado13, "División");
+    estado12->addArrayEventEnd(digitos, estado13, "División");
+    estado12->addEvent('/', estado14);
+    
+    estado14->setEstado("14");
+    estado14->addArrayEvent(digitos, estado15);
+    estado14->addArrayEvent(operandos, estado15);
+    estado14->addArrayEvent(variables, estado15);
+    estado14->addEvent(' ', estado15);
+    estado14->addEvent('(', estado15);
+    estado14->addEvent(')', estado15);
+    
+    estado15->setEstado("15");
+    estado15->addArrayEvent(digitos, estado15);
+    estado15->addArrayEvent(operandos, estado15);
+    estado15->addArrayEvent(variables, estado15);
+    estado15->addEvent(' ', estado15);
+    estado15->addEvent('(', estado15);
+    estado15->addEvent(')', estado15);
+    estado15->addEventEnd('#', estado20, "Comentario");
+    
+    estado16->setEstado("16");
+    estado16->addArrayEvent(variables, estado16);
+    estado16->addEventEnd(' ', estado17, "Variable");
+    estado16->addEventEnd('(', estado17, "Variable");
+    estado16->addEventEnd(')', estado17, "Variable");
+    estado16->addEventEnd('=', estado17, "Variable");
+    estado16->addArrayEventEnd(operandos, estado17, "Variable");
+    
+    estado18->setEstado("18");
+    estado18->addArrayEvent(digitos, estado1);
+    estado18->addEventEnd(' ', estado19, "Resta");
+    estado18->addEventEnd('(', estado19, "Resta");
+    estado18->addArrayEventEnd(variables, estado19, "Resta");
     
     /*string mensaje = "87*9";
     
@@ -94,23 +142,41 @@ int main(int argc, const char * argv[]) {
     //automata->addState(estado0, "8", estado1);
     
     string line;
+    string tokenI="";
     int linea = 1;
     ifstream archivo("prueba.txt");
     if (archivo.is_open())
     {
         Estado *aux = estado0;
+        Estado *aux2 = NULL;
         while ( getline (archivo,line) )
         {
             for(int i=0; i<line.length(); ++i)
             {
                 //cout << line.at(i) << '\n';
-                aux = aux->toNext(line.at(i));
+                aux2 = aux->toNext(line.at(i));
+                if(aux2 == estado0)
+                {
+                    token_identificado.push_back(tokenI);
+                    identificacion_token.push_back(aux->getFin(tokenI.back()));
+                    tokenI = "";
+                    tokenI += line.at(i);
+                }
+                else
+                {
+                    tokenI += line.at(i);
+                }
+                aux = aux2;
                 
                 if(aux == NULL)
                 {
                     cout << "Error al procesar el token " << line.at(i) << " en la linea " << linea << endl;
                     exit(EXIT_FAILURE);
                 }
+                /*else if(aux == estado0)
+                {
+                    aux = aux->toNext(line.at(i));
+                }*/
             }
             ++linea;
         }

@@ -80,6 +80,7 @@ int main(int argc, const char * argv[]) {
     estado4->addEventEnd('(', estado5,"Real");
     estado4->addEventEnd(')', estado5, "Real");
     estado4->addArrayEventEnd(operandos, estado5, "Real");
+    estado4->addEventEnd('#', estado5, "Real");
     
     estado8->setEstado("8");
     estado8->addEvent('+', estado9);
@@ -122,13 +123,14 @@ int main(int argc, const char * argv[]) {
     estado16->addEventEnd(')', estado17, "Variable");
     estado16->addEventEnd('=', estado17, "Variable");
     estado16->addArrayEventEnd(operandos, estado17, "Variable");
+    estado16->addEventEnd('#', estado17, "Variable");
     
     estado18->setEstado("18");
     estado18->addArrayEventEnd(digitos, estado19, "Paréntesis que abre");
     estado18->addEventEnd(' ', estado19, "Paréntesis que abre");
     estado18->addArrayEventEnd(operandos, estado19, "Paréntesis que abre");
     estado18->addArrayEventEnd(variables, estado19, "Paréntesis que abre");
-    estado18->addEvent('-', estado21);
+    estado18->addEventEnd('-', estado21, "Paréntesis que abre");
     
     estado21->setEstado("21");
     estado21->setEstadoFin(true);
@@ -166,7 +168,7 @@ int main(int argc, const char * argv[]) {
             {
                 //cout << line.at(i) << '\n';
                 aux2 = aux->toNext(line.at(i));
-                if(aux2 == estado0)
+                if(aux2 == estado0 || aux2->getEstadoFin() == true)
                 {
                     token_identificado.push_back(tokenI);
                     identificacion_token.push_back(aux->getFin(line.at(i)));

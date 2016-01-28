@@ -61,12 +61,14 @@ public:
     Estado()
     {
         estado = "";
+        estadoFin = false;
     }
     Estado(string es, char tk, Estado *sig)
     {
         estado = es;
         tokens.push_back(tk);
         siguiente.push_back(sig);
+        estadoFin = false;
     }
     Estado *toNext(char tok)
     {

@@ -12,15 +12,16 @@
 
 int main(int argc, const char * argv[]) {
     
-    Automata *automata = new Automata();
-    
+    /* Definición de los vectores que contienen los distintos elementos/tokens a identificar */
     vector<char> digitos={'0','1','2','3','4','5','6','7','8','9'};
     vector<char> operandos={'+','-','/','*','^'};
     vector<char> variables={'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'};
     
+    /* Vectores que contendrán los tokens identificados con su descripción */
     vector<string> token_identificado;
     vector<string> identificacion_token;
     
+    /* Definición de los estados del autómata */
     Estado *estado0 = new Estado();
     Estado *estado1 = new Estado();
     Estado *estado2 = estado0;
@@ -45,6 +46,7 @@ int main(int argc, const char * argv[]) {
     Estado *estado21 = new Estado();
     Estado *estado22 = estado0;
     
+    /* Se definen los valores de los atributos de cada estado así como los tokens que deben de procesar e identificación de tokens en caso de que el estado siguiente sea uno final */
     estado0->setEstado("0");
     estado0->addEvent(' ', estado0);
     estado0->addArrayEvent(digitos, estado1);
@@ -143,40 +145,32 @@ int main(int argc, const char * argv[]) {
     estado21->addEventEnd('(', estado22, "Resta");
     estado21->addArrayEventEnd(variables, estado22, "Resta");
     
-    /*string mensaje = "87*9";
     
-    estado0->setEstado("0");
-    estado0->addEvent('8', estado1);
-    
-    //cout << estado0->getSigEs() << endl;
-    
-    estado1->setEstado("1");
-    estado1->addEvent('7', estado1);
-    estado1->addEvent('*', estado2);
-    
-    estado2->setEstado("2");*/
-    
-    //automata->addState(estado0, "8", estado1);
-    
+    /* Se definen las variables para abrir el archivo de texto que en este caso se llama prueba.txt */
     string line;
     string tokenI="";
     int linea = 1;
     ifstream archivo("prueba.txt");
     if (archivo.is_open())
     {
+        //Definición de Estados auxiliares
         Estado *aux = estado0;
         Estado *aux2 = NULL;
+        
+        //Definición del while que obtiene cada línea del archivo
         while ( getline (archivo,line) )
         {
+            //Definición del for que clasifica cada caracter de la linea
             for(int i=0; i<line.length(); ++i)
             {
-                //cout << line.at(i) << '\n';
+                //Se obtiene el estado siguiente analizando el caracter actual
                 aux2 = aux->toNext(line.at(i));
                 if(aux2 == estado0 || (aux2 != NULL && aux2->getEstadoFin() == true))
                 {
+                    //Al ser estado final se añade el conjunto de caracteres a tokens identificados junto con la descripción que se obtiene con la funcion getFin
                     token_identificado.push_back(tokenI);
                     identificacion_token.push_back(aux->getFin(line.at(i)));
-                    tokenI = "";
+                    tokenI = ""; //Se reinicia el string de caracteres
                     if(line.at(i) != ' ')
                         tokenI += line.at(i);
                 }
@@ -188,28 +182,29 @@ int main(int argc, const char * argv[]) {
                 
                 if(aux == NULL)
                 {
+                    //En caso de detectar un estado siguiente nulo quiere decir que hay un error y se desplegará un error diciendo cuál fue el caracter del problema en qué línea y termina el programa
                     cout << "Error al procesar el token " << line.at(i) << " en la linea " << linea << endl;
                     exit(EXIT_FAILURE);
                 }
                 else if(aux == estado0)
                 {
+                    //Si queda un elemento por analizar al estar en el estado cero que es el inicial se vuelve a ejecutar un analisis
                     aux = aux->toNext(line.at(i));
                     if(aux == estado0)
                     {
-
                         token_identificado.push_back(tokenI);
                         identificacion_token.push_back(aux->getFin(line.at(i)));
                         tokenI = "";
                     }
-                    //aux = aux->toNext(line.at(i));
                 }
             }
-            ++linea;
-            //aux = aux->toNext('#');
+            ++linea; //Se hace el correspondiente incremento
             if(tokenI.length() > 0)
             {
+                //Si queda aún así algun elemento por analizar después del término de la línea se ejecuta lo siguiente.
                 if(aux->toNext('#') == estado0)
                 {
+                    //Al declarar el caracter # como fin de línea se le manda al estado que lo procese para ver si puede quedar así la escritura del usuario o si hay un error
                     token_identificado.push_back(tokenI);
                     identificacion_token.push_back(aux->getFin('#'));
                     tokenI = "";
@@ -217,20 +212,24 @@ int main(int argc, const char * argv[]) {
                 }
                 else if (aux->toNext('#') == NULL)
                 {
+                    //Al igual que en la identificación de error anterior te dice en que línea y que caracter y termina el programa
                     cout << "Error al procesar el token " << tokenI.back() << " en la linea " << linea-1 << endl;
                     exit(EXIT_FAILURE);
                 }
             }
         }
-        archivo.close();
+        archivo.close(); //Se cierra el archivo
     }
     
+    //Error por si no se puede abrir el archivo
     else cout << "No se pudo abrir el archivo" << endl;
     
+    //Inicio de la tabla con un tabular
     cout << "Token\tTipo" << endl;
     
     for(int i=0; i<token_identificado.size(); ++i)
     {
+        //Se imprimen todos los tokens identificados con su descripción
         if(token_identificado[i] != "")
             cout << token_identificado[i] << "\t" << identificacion_token[i] << endl;
     }

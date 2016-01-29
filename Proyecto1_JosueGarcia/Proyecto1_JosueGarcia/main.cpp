@@ -92,6 +92,7 @@ int main(int argc, const char * argv[]) {
     estado9->addEventEnd('(', estado10, "Real");
     estado9->addEventEnd(')', estado10, "Real");
     estado9->addArrayEventEnd(operandos, estado10, "Real");
+    estado9->addEventEnd('#', estado10, "Real");
     
     estado12->setEstado("12");
     estado12->addEventEnd('(', estado13, "División");
@@ -128,7 +129,10 @@ int main(int argc, const char * argv[]) {
     estado18->setEstado("18");
     estado18->addArrayEventEnd(digitos, estado19, "Paréntesis que abre");
     estado18->addEventEnd(' ', estado19, "Paréntesis que abre");
-    estado18->addArrayEventEnd(operandos, estado19, "Paréntesis que abre");
+    estado18->addEventEnd('+', estado19, "Paréntesis que abre");
+    estado18->addEventEnd('/', estado19, "Paréntesis que abre");
+    estado18->addEventEnd('*', estado19, "Paréntesis que abre");
+    estado18->addEventEnd('^', estado19, "Paréntesis que abre");
     estado18->addArrayEventEnd(variables, estado19, "Paréntesis que abre");
     estado18->addEventEnd('-', estado21, "Paréntesis que abre");
     
@@ -136,7 +140,7 @@ int main(int argc, const char * argv[]) {
     estado21->setEstadoFin(true);
     estado21->addArrayEvent(digitos, estado1);
     estado21->addEventEnd(' ', estado22, "Resta");
-    estado21->addEventEnd(' ', estado22, "Resta");
+    estado21->addEventEnd('(', estado22, "Resta");
     estado21->addArrayEventEnd(variables, estado22, "Resta");
     
     /*string mensaje = "87*9";
@@ -168,12 +172,13 @@ int main(int argc, const char * argv[]) {
             {
                 //cout << line.at(i) << '\n';
                 aux2 = aux->toNext(line.at(i));
-                if(aux2 == estado0 || aux2->getEstadoFin() == true)
+                if(aux2 == estado0 || (aux2 != NULL && aux2->getEstadoFin() == true))
                 {
                     token_identificado.push_back(tokenI);
                     identificacion_token.push_back(aux->getFin(line.at(i)));
                     tokenI = "";
-                    tokenI += line.at(i);
+                    if(line.at(i) != ' ')
+                        tokenI += line.at(i);
                 }
                 else
                 {
@@ -191,6 +196,7 @@ int main(int argc, const char * argv[]) {
                     aux = aux->toNext(line.at(i));
                     if(aux == estado0)
                     {
+
                         token_identificado.push_back(tokenI);
                         identificacion_token.push_back(aux->getFin(line.at(i)));
                         tokenI = "";
@@ -200,17 +206,20 @@ int main(int argc, const char * argv[]) {
             }
             ++linea;
             //aux = aux->toNext('#');
-            if(aux->toNext('#') == estado0)
+            if(tokenI.length() > 0)
             {
-                token_identificado.push_back(tokenI);
-                identificacion_token.push_back(aux->getFin('#'));
-                tokenI = "";
-                aux = estado0;
-            }
-            else if (aux->toNext('#') == NULL)
-            {
-                cout << "Error al procesar el token " << tokenI.back() << " en la linea " << linea-1 << endl;
-                exit(EXIT_FAILURE);
+                if(aux->toNext('#') == estado0)
+                {
+                    token_identificado.push_back(tokenI);
+                    identificacion_token.push_back(aux->getFin('#'));
+                    tokenI = "";
+                    aux = estado0;
+                }
+                else if (aux->toNext('#') == NULL)
+                {
+                    cout << "Error al procesar el token " << tokenI.back() << " en la linea " << linea-1 << endl;
+                    exit(EXIT_FAILURE);
+                }
             }
         }
         archivo.close();
@@ -222,7 +231,8 @@ int main(int argc, const char * argv[]) {
     
     for(int i=0; i<token_identificado.size(); ++i)
     {
-        cout << token_identificado[i] << "\t" << identificacion_token[i] << endl;
+        if(token_identificado[i] != "")
+            cout << token_identificado[i] << "\t" << identificacion_token[i] << endl;
     }
     
     return 0;

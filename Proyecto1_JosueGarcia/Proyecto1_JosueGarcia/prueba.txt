@@ -1,1 +1,5 @@
-87.4^9.4*Josue
+87.4^9.4E-5*Josue//5
+(a)-(-4.3e+6)
+b=7
+a = 32.4 *(-8.6 - b)/   6.1E-8
+d = a ^ b // Esto es un comentario
